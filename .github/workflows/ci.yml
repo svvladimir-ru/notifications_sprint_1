@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, development ]
+  pull_request:
+    branches: [ main, development ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+        - '3.9'
+        - '3.10'
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install UGC dependencies
+      run: |
+        cd services/ugc
+        python -m pip install --upgrade pip
+        pip install flake8 mypy lxml
+        pip install -r requirements/prod.txt 
+    - name: Lint with flake8
+      run: |
+        cd services/ugc
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --max-complexity=10 --max-line-length=120 --statistics
+    - name: Static type checking with Mypy
+      run: |
+        cd services/ugc
+        mypy --ignore-missing-imports --show-error-codes --install-types --non-interactive --html-report mypy-html-report .
+    - name: Archive code checking results
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-check-report-${{ matrix.python-version }}
+        path: services/ugc/mypy-html-report
+        retention-days: 30
+
+  notify:
+    needs: build
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send telegram message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ${{ github.actor }} ${{ github.event.action == 'opened' && 'created' || 'updated' }} pull request with title '${{ github.event.pull_request.title }}'
+
+            Repository: ${{ github.repository }}
+
+            See pull request: https://github.com/${{ github.repository }}/pull/${{ github.event.number }}
+            See CI artifacts: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
