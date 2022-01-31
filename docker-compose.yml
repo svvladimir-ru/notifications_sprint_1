@@ -1,0 +1,20 @@
+version: '3'
+
+networks:
+  backend:
+    driver: bridge
+
+services:
+  db:
+    build: ./services/postgres
+    container_name: postgres
+    profiles: [ "main", "init" ]
+    networks:
+      - backend
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data/
+    env_file:
+      - ./services/postgres/.env
+
+volumes:
+  postgres_volume:
