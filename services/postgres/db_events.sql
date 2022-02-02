@@ -1,10 +1,18 @@
 CREATE SCHEMA IF NOT EXISTS events;
 
+CREATE TABLE IF NOT EXISTS events.templates(
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    template TEXT NOT NULL,
+    created_at timestamptz DEFAULT NOW(),
+    updated_at timestamptz DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS events.welcome(
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid,
     template_id uuid,
-    created_at timestamptz
+    created_at timestamptz DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS events.discounts(
@@ -12,7 +20,7 @@ CREATE TABLE IF NOT EXISTS events.discounts(
     template_id uuid,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
-    created_at timestamptz
+    created_at timestamptz DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS events.updating_content(
@@ -20,15 +28,7 @@ CREATE TABLE IF NOT EXISTS events.updating_content(
     template_id uuid,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
-    created_at timestamptz
-);
-
-CREATE TABLE IF NOT EXISTS events.templates(
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL,
-    template TEXT NOT NULL,
-    created_at timestamptz,
-    updated_at timestamptz
+    created_at timestamptz DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS events.events(

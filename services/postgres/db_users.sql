@@ -3,34 +3,20 @@ CREATE SCHEMA IF NOT EXISTS users;
 -- Создать таблицу - users
 CREATE TABLE IF NOT EXISTS users.user(
     id uuid PRIMARY KEY  DEFAULT gen_random_uuid(),
-    login TEXT NOT NULL,
-    email TEXT NOT NULL,
+    login TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
     confirmed boolean DEFAULT FALSE,
     password TEXT NOT NULL,
-    created_at timestamptz,
-    updated_at timestamptz,
-    CONSTRAINT user_id_login UNIQUE (id, login),
-    CONSTRAINT user_id_email UNIQUE (id, email)
+    created_at timestamptz DEFAULT NOW(),
+    updated_at timestamptz DEFAULT NOW()
 );
 
 -- Создать таблицу - role
 CREATE TABLE IF NOT EXISTS users.role(
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT UNIQUE,
-    created_at timestamptz,
-    updated_at timestamptz
-);
-
--- Создать таблицу - login_history
-CREATE TABLE IF NOT EXISTS users.login_history(
-    id uuid DEFAULT gen_random_uuid(),
-    user_id uuid,
-    ip TEXT,
-    user_agent TEXT,
-    device_type TEXT,
-    created_at timestamptz,
-    PRIMARY KEY (id, device_type),
-    CONSTRAINT login_history_id_device UNIQUE (id, device_type)
+    created_at timestamptz DEFAULT NOW(),
+    updated_at timestamptz DEFAULT NOW()
 );
 
 -- Создать таблицу - user_role
@@ -38,7 +24,7 @@ CREATE TABLE IF NOT EXISTS users.user_role(
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid,
     role_id uuid,
-    created_at timestamptz,
+    created_at timestamptz DEFAULT NOW(),
 	CONSTRAINT user_role_id_unique UNIQUE (user_id, role_id)
 );
 
