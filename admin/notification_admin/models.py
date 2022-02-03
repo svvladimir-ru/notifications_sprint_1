@@ -51,6 +51,9 @@ class User(TimeStampMixin, models.Model):
     email = models.EmailField(_('Email'), unique=True)
     password = models.CharField(_('Password'), max_length=128)
     confirmed = models.BooleanField(_('Confirmed'), default=False)
+    mail_subscribe = models.BooleanField(_('Subscribe'), default=True)
+
+    role = models.ManyToManyField(Role, through='UserRole')
 
     class Meta:
         verbose_name = _('user')

@@ -10,13 +10,14 @@ class RoleInlineAdmin(admin.TabularInline):
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('login', 'email', 'confirmed',)
-    list_filter = ('confirmed',)
+    list_display = ('login', 'email', 'confirmed', 'mail_subscribe')
+    list_filter = ('confirmed', 'mail_subscribe')
     search_fields = ('login', 'email',)
     fields = (
         'login',
         'email',
         'confirmed',
+        'mail_subscribe',
         'password',
     )
     inlines = (RoleInlineAdmin,)

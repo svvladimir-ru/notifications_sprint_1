@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users.user(
     login TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
     confirmed boolean DEFAULT FALSE,
+    mail_subscribe boolean DEFAULT TRUE,
     password TEXT NOT NULL,
     created_at timestamptz DEFAULT NOW(),
     updated_at timestamptz DEFAULT NOW()

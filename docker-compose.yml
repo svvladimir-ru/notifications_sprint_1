@@ -1,14 +1,12 @@
 version: '3'
 
 networks:
-  proxy:
   backend:
 
 services:
   db:
     build: ./services/postgres
     container_name: postgres
-    profiles: [ "main", "init" ]
     networks:
       - backend
     ports:
@@ -20,17 +18,28 @@ services:
 
   admin:
     build: ./admin
-    profiles: [ "main", "start" ]
     networks:
-      - proxy
       - backend
     ports:
-      - 8000:8000
+      - 8081:8000
     volumes:
       - ./admin:/usr/src/admin/
       - static_volume:/usr/src/admin/static
     env_file:
       - ./admin/.env
+    depends_on:
+      - db
+
+  actions_api:
+    build: ./actions_api
+    networks:
+      - backend
+    ports:
+      - 8082:8000
+    volumes:
+      - ./actions_api:/usr/src/actions_api/
+    env_file:
+      - ./actions_api/.env
     depends_on:
       - db
 
