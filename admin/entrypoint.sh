@@ -22,7 +22,7 @@ then
         --email $DJANGO_SUPERUSER_EMAIL
 else
   python manage.py collectstatic --noinput
+  gunicorn -c './gunicorn_conf.py' config.wsgi
 fi
 
-gunicorn -c './gunicorn_conf.py' config.wsgi
 exec "$@"

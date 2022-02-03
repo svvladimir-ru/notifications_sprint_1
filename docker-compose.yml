@@ -7,10 +7,9 @@ services:
   db:
     build: ./services/postgres
     container_name: postgres
+    profiles: ["main", "init"]
     networks:
       - backend
-    ports:
-      - 5432:5432
     volumes:
       - postgres_volume:/var/lib/postgresql/data/
     env_file:
@@ -18,30 +17,56 @@ services:
 
   admin:
     build: ./admin
+    profiles: ["main", "init"]
     networks:
       - backend
-    ports:
-      - 8081:8000
     volumes:
       - ./admin:/usr/src/admin/
       - static_volume:/usr/src/admin/static
     env_file:
       - ./admin/.env
+    entrypoint: ["./entrypoint.sh"]
+    depends_on:
+      - db
+
+  admin-migrate:
+    build: ./admin
+    profiles: ["init"]
+    networks:
+      - backend
+    volumes:
+      - ./admin:/usr/src/admin/
+      - static_volume:/usr/src/admin/static
+    env_file:
+      - ./admin/.env
+    entrypoint: ["./entrypoint.sh", "migrate"]
     depends_on:
       - db
 
   actions_api:
     build: ./actions_api
+    profiles: ["main", "init"]
     networks:
       - backend
-    ports:
-      - 8082:8000
     volumes:
       - ./actions_api:/usr/src/actions_api/
     env_file:
       - ./actions_api/.env
     depends_on:
       - db
+
+  nginx:
+    build: ./services/nginx
+    profiles: ["main", "init"]
+    networks:
+      - backend
+    ports:
+      - 80:80
+    volumes:
+      - static_volume:/usr/src/admin/static
+    depends_on:
+      - admin
+      - actions_api
 
 volumes:
   postgres_volume:

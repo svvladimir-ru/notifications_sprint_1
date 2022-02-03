@@ -17,4 +17,3 @@ RUN poetry config virtualenvs.create false
 RUN poetry install
 # copy project
 COPY . .
-ENTRYPOINT ["sh", "/usr/src/admin/entrypoint.sh", "migrate"]
