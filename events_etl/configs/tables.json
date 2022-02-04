@@ -1,0 +1,20 @@
+{
+  "events": {
+    "schema": "events",
+    "name": "events",
+    "fields": "*",
+    "filter_filed": "processed"
+  },
+  "welcome": {
+    "schema": "events",
+    "name": "welcome",
+    "fields": "*",
+    "filter_filed": "id"
+  },
+  "others": {
+    "schema": "events",
+    "name": "others",
+    "fields": "*",
+    "filter_filed": "id"
+  }
+}

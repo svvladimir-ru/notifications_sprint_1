@@ -15,15 +15,7 @@ CREATE TABLE IF NOT EXISTS events.welcome(
     created_at timestamptz DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS events.discounts(
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    template_id uuid,
-    title TEXT NOT NULL,
-    description TEXT NOT NULL,
-    created_at timestamptz DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS events.updating_content(
+CREATE TABLE IF NOT EXISTS events.others(
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     template_id uuid,
     title TEXT NOT NULL,
@@ -36,7 +28,8 @@ CREATE TABLE IF NOT EXISTS events.events(
     created_at timestamptz DEFAULT now(),
     schema_name TEXT NOT NULL,
     table_name TEXT NOT NULL,
-    record_id uuid NOT NULL
+    record_id uuid NOT NULL,
+    processed boolean DEFAULT FALSE
 );
 
 -- Создать функцию логирования создания событий - create_event_trigger()
@@ -55,8 +48,5 @@ $$ LANGUAGE 'plpgsql' SECURITY DEFINER;
 CREATE TRIGGER welcome_event_trigger BEFORE INSERT ON events.welcome
     FOR EACH ROW EXECUTE PROCEDURE create_event_trigger();
 
-CREATE TRIGGER update_content_event_trigger BEFORE INSERT ON events.updating_content
-    FOR EACH ROW EXECUTE PROCEDURE create_event_trigger();
-
-CREATE TRIGGER discounts_event_trigger BEFORE INSERT ON events.discounts
+CREATE TRIGGER others_event_trigger BEFORE INSERT ON events.others
     FOR EACH ROW EXECUTE PROCEDURE create_event_trigger();

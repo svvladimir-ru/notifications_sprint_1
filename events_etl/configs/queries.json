@@ -1,0 +1,6 @@
+{
+  "read": {
+    "base": "SELECT {fields} FROM {schema}.{name}",
+    "filter": "WHERE {filter_filed} IS {field_value}"
+  }
+}
