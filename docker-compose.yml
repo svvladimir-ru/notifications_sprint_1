@@ -1,35 +1,6 @@
 version: '3.9'
 
 services:
-  movies_ugc:
-    build:
-      context: .
-    container_name: movies_ugc
-    restart: on-failure
-    depends_on:
-      - kafka_ugc
-      - zookeeper_ugc
-
-  zookeeper_ugc:
-    image: wurstmeister/zookeeper:3.4.6
-    container_name: zookeeper_ugc
-
-  kafka_ugc:
-    image: wurstmeister/kafka:2.13-2.8.1
-    container_name: kafka_ugc
-    volumes:
-      - kafka_ugc:/var/run/docker.sock
-
-  ugc_etl:
-    build:
-      dockerfile: Dockerfile
-      context: ./services/kafka_to_clickhouse/
-    container_name: etl_ugc
-    env_file:
-      - ./.env.dev
-    volumes:
-      - ./services/kafka_to_clickhouse:/app
-
   rabbit_worker:
     container_name: rabbit_worker
     build:
