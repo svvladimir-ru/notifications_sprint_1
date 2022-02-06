@@ -13,7 +13,8 @@ class RabbitMQSettings(BaseSettings):
     ROUTING: str = 'welcome'
 
     class Config:
-        env_prefix = "RABBIT_"
+        env_file = '.env'
+        env_prefix = "NOTIFIC_RABBIT_"
 
 
 class PostgresSettings(BaseSettings):
@@ -25,6 +26,7 @@ class PostgresSettings(BaseSettings):
     POSTGRES_DSN: AnyUrl = f'postgresql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DB}'
 
     class Config:
+        env_file = '.env'
         env_prefix = "NOTIFIC_POSTGRES"
 
 
@@ -34,3 +36,6 @@ class Base(BaseSettings):
     POSTGRES: PostgresSettings = PostgresSettings()
     RABBIT: RabbitMQSettings = RabbitMQSettings()
     BITLY_ACCESS_TOKEN: str
+
+    class Config:
+        env_file = '.env'

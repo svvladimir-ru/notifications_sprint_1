@@ -1,12 +1,12 @@
 version: '3.9'
 
-volumes:
-  redis_data:
-  postgres_data:
-  elasticsearch_data:
-  redis_auth_data:
-  postgres_auth_data:
-  kafka_ugc:
+#volumes:
+#  redis_data:
+#  postgres_data:
+#  elasticsearch_data:
+#  redis_auth_data:
+#  postgres_auth_data:
+#  kafka_ugc:
 
 services:
 #  postgres:
@@ -46,12 +46,29 @@ services:
 #    volumes:
 #      - ./services/kafka_to_clickhouse:/app
 
+  rabbit_worker:
+    container_name: rabbit_worker
+    build:
+      dockerfile: Dockerfile
+      context: ./services/notification/broker_service/src
+    env_file:
+      - ./.env
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+
+#  rabbit_consumer:
+#    container_name: rabbit_consumer
+#    build:
+#      dockerfile: Dockerfile
+#      context: ./services/notification/
+#    env_file:
+#      - ./.env
+
   rabbitmq:
     image: rabbitmq:3.9.13-management
     container_name: rabbitmq
-#    environment:
-#      RABBITMQ_DEFAULT_USER: rabbit
-#      RABBITMQ_DEFAULT_PASS: rabbit
     ports:
       - 5672:5672
       - 15672:15672

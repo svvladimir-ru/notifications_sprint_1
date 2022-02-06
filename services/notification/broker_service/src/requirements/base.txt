@@ -6,9 +6,15 @@ orjson==3.4.1
 uvicorn==0.12.2
 pydantic==1.8.2
 python-logstash==0.4.6
+pydantic[dotenv]
+psycopg2-binary==2.9.3
+pika==1.2.0
 multidict==5.2.0
 sentry-sdk==1.5.4
 SQLAlchemy==1.4.31
 urllib3==1.26.7
 Jinja2==3.0.3
-pydantic[dotenv]
+gunicorn==20.1.0
+httptools==0.3.0
+uvloop==0.16.0
+requests==2.27.1

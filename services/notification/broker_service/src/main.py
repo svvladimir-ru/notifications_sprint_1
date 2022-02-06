@@ -9,7 +9,7 @@ from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 from api.v1 import broker
 from core import settings
 
-from services.notification.broker_service.src.database import rabbit, db
+from database import rabbit, db
 
 app = FastAPI(title=settings.PROJECT_NAME,
               description='Сервиса Брокер RabbitMQ',
@@ -25,15 +25,15 @@ SentryAsgiMiddleware(app)
 @app.on_event('startup')
 async def startup():
     rabbit.rq = pika.BlockingConnection(pika.ConnectionParameters(settings.RABBIT.HOST))
-    rabbit.rq.channel().queue_declare('welcome')
-    rabbit.rq.channel().queue_declare('events')
-    await db.get_db()
+    rabbit.rq.channel().queue_declare('Welcome')
+    rabbit.rq.channel().queue_declare('Other')
+    db.get_db()
 
 
 @app.on_event('shutdown')
 async def shutdown():
     await rabbit.rq.close()
-    await db.get_db().close()
+    db.get_db().close()
 
 
 app.include_router(broker.router, prefix='/api/v1/broker', tags=['broker'])

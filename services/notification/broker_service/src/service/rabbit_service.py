@@ -4,22 +4,19 @@ import requests
 from fastapi import Depends
 from sqlalchemy.orm.session import Session
 
-from services.notification.broker_service.src.core import settings
-from services.notification.broker_service.src.database.rabbit import get_rabbit
-from services.notification.broker_service.src.database.database import Others, Welcome, Template, User
-from services.notification.broker_service.src.database.db import get_db
+from core import settings
+from database.rabbit import get_rabbit
+from database.database import Others, Welcome, Template, User
+from database.db import get_db
 
 
 class RQBase:
-    def __init__(self, connection: pika.BlockingConnection() = Depends(get_rabbit),
+    def __init__(self,
+                 connection: pika.BlockingConnection(
+                     pika.ConnectionParameters(settings.RABBIT.HOST)) = Depends(get_rabbit),
                  routing: str = settings.RABBIT.ROUTING):
-
-        self.host = settings.RABBIT.HOST
         self.routing = routing
         self.connection = connection
-
-    def connection_open(self):
-        return pika.BlockingConnection(pika.ConnectionParameters(self.host))
 
     def open_channel(self):
         return self.connection().channel()
@@ -29,7 +26,7 @@ class RQBase:
 
 
 class RQWorker(RQBase):
-    def __init__(self, pk: str, routing):
+    def __init__(self, pk: str):
         super().__init__()
         self.id = pk
 

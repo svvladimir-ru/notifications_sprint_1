@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-from services.notification.broker_service.src.core import settings
+from core import settings
 
 
 engine = create_engine(settings.POSTGRES.POSTGRES_DSN)

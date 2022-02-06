@@ -1,8 +1,8 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Request
-from services.notification.broker_service.src.service.rabbit_service import RQWorker
-from services.notification.broker_service.src.core import settings
+from service.rabbit_service import RQWorker
+from core import settings
 
 router = APIRouter()
 

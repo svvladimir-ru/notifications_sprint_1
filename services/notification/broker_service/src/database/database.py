@@ -1,12 +1,11 @@
 from datetime import datetime
 from uuid import uuid4
-from hashlib import sha512
 from sqlalchemy import Column, DateTime
-from sqlalchemy import String, Text, Boolean
+from sqlalchemy import String, Text, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 
 
-from services.notification.broker_service.src.database.db import Base
+from database.db import Base
 
 
 class DateMixin:
@@ -31,8 +30,8 @@ class Welcome(DateMixin, Base):
     __tablename__ = "welcome"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
-    user_id = Column("user_id", UUID(as_uuid=True), Base.ForeignKey("users.id"))
-    template_id = Column("template_id", UUID(as_uuid=True), Base.ForeignKey("templates.id"))
+    user_id = Column("user_id", UUID(as_uuid=True), ForeignKey("user.id"))
+    template_id = Column("template_id", UUID(as_uuid=True), ForeignKey("templates.id"))
 
 
 class Others(DateMixin, Base):
@@ -41,13 +40,14 @@ class Others(DateMixin, Base):
     __tablename__ = "others"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
-    template_id = Column("template_id", UUID(as_uuid=True), Base.ForeignKey("templates.id"))
+    template_id = Column("template_id", UUID(as_uuid=True), ForeignKey("templates.id"))
     title = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
 
 
 class User(DateMixin, Base):
     __tablename__ = "user"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
     email = Column(Text, nullable=False)
     confirmed = Column(Boolean, nullable=False)
     mail_subscribe = Column(Boolean, nullable=False)
