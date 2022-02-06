@@ -1,50 +1,34 @@
 version: '3.9'
 
-#volumes:
-#  redis_data:
-#  postgres_data:
-#  elasticsearch_data:
-#  redis_auth_data:
-#  postgres_auth_data:
-#  kafka_ugc:
-
 services:
-#  postgres:
-#    image: postgres:13.0-alpine
-#    container_name: postgres
-#    restart: always
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data/
-#      - ./services/movies_admin/entrypoint.initdb.sh:/docker-entrypoint-initdb.d/entrypoint-initdb.sh
+  movies_ugc:
+    build:
+      context: .
+    container_name: movies_ugc
+    restart: on-failure
+    depends_on:
+      - kafka_ugc
+      - zookeeper_ugc
 
-#  movies_ugc:
-#    build:
-#      context: .
-#    container_name: movies_ugc
-#    restart: on-failure
-#    depends_on:
-#      - kafka_ugc
-#      - zookeeper_ugc
-#
-#  zookeeper_ugc:
-#    image: wurstmeister/zookeeper:3.4.6
-#    container_name: zookeeper_ugc
-#
-#  kafka_ugc:
-#    image: wurstmeister/kafka:2.13-2.8.1
-#    container_name: kafka_ugc
-#    volumes:
-#      - kafka_ugc:/var/run/docker.sock
-#
-#  ugc_etl:
-#    build:
-#      dockerfile: Dockerfile
-#      context: ./services/kafka_to_clickhouse/
-#    container_name: etl_ugc
-#    env_file:
-#      - ./.env.dev
-#    volumes:
-#      - ./services/kafka_to_clickhouse:/app
+  zookeeper_ugc:
+    image: wurstmeister/zookeeper:3.4.6
+    container_name: zookeeper_ugc
+
+  kafka_ugc:
+    image: wurstmeister/kafka:2.13-2.8.1
+    container_name: kafka_ugc
+    volumes:
+      - kafka_ugc:/var/run/docker.sock
+
+  ugc_etl:
+    build:
+      dockerfile: Dockerfile
+      context: ./services/kafka_to_clickhouse/
+    container_name: etl_ugc
+    env_file:
+      - ./.env.dev
+    volumes:
+      - ./services/kafka_to_clickhouse:/app
 
   rabbit_worker:
     container_name: rabbit_worker
@@ -55,8 +39,7 @@ services:
       - ./.env
     depends_on:
       - rabbitmq
-    links:
-      - rabbitmq
+      - db
 
   rabbit_consumer:
     container_name: rabbit_consumer
@@ -65,6 +48,9 @@ services:
       context: ./services/notification/
     env_file:
       - ./.env
+    depends_on:
+      - rabbitmq
+      - db
 
   rabbitmq:
     image: rabbitmq:3.9.13-management

@@ -5,12 +5,6 @@ x-services:
     - zookeeper_ugc
 
 services:
-  postgres:
-    ports:
-      - "5433:5432"
-    env_file:
-      - ./.env.dev
-
   nginx:
     build: ./services/nginx
     container_name: nginx
