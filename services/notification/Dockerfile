@@ -1,7 +1,7 @@
 FROM python:3.9.7-buster
 WORKDIR /sites
-COPY requirements.txt /sites
-RUN pip install -r /sites/requirements.txt --no-cache-dir
+COPY broker_service/src/requirements/base.txt /sites
+RUN pip install -r /sites/base.txt --no-cache-dir
 COPY ./scheduler /sites/scheduler
 COPY email_consumer.py /sites
 COPY config.py /sites

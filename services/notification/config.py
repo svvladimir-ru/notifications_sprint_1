@@ -4,7 +4,7 @@ from pydantic import BaseSettings, AnyUrl, validator, RedisDsn, PostgresDsn
 class RabbitMQSettings(BaseSettings):
     USERNAME: str = 'rabbit'
     PASSWORD: str = 'rabbit'
-    HOST: str = 'localhost'
+    HOST: str = 'rabbitmq'
     PORT: int = 5672
     DSN: AnyUrl = 'amqp://rabbit:rabbit@127.0.0.1:5672/%2F'
     EXCHANGE: str = ''

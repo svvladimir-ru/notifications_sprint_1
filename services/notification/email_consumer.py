@@ -2,8 +2,8 @@ import time
 import pika
 import json
 
-from services.notification.scheduler.email_sender import send_mail
-from services.notification.config import settings
+from scheduler.email_sender import send_mail
+from config import settings
 
 
 class RQBase:

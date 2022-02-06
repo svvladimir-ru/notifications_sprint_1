@@ -58,13 +58,13 @@ services:
     links:
       - rabbitmq
 
-#  rabbit_consumer:
-#    container_name: rabbit_consumer
-#    build:
-#      dockerfile: Dockerfile
-#      context: ./services/notification/
-#    env_file:
-#      - ./.env
+  rabbit_consumer:
+    container_name: rabbit_consumer
+    build:
+      dockerfile: Dockerfile
+      context: ./services/notification/
+    env_file:
+      - ./.env
 
   rabbitmq:
     image: rabbitmq:3.9.13-management

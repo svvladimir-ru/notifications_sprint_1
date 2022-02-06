@@ -2,7 +2,7 @@ import os
 import smtplib
 from email.message import EmailMessage
 from jinja2 import Environment, FileSystemLoader
-from services.notification import settings
+from config import settings
 
 
 def send_mail(to, subject, content):
