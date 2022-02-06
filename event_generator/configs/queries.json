@@ -1,0 +1,9 @@
+{
+  "create": {
+    "base": "INSERT INTO {schema}.{name} ({fields}) VALUES ({values})"
+  },
+  "read": {
+    "base": "SELECT {fields} FROM {schema}.{name}",
+    "filter": "WHERE {filter_filed} LIKE {field_value}"
+  }
+}

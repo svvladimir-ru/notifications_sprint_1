@@ -57,6 +57,18 @@ services:
     depends_on:
       - db
 
+  event_generator:
+    build: ./event_generator
+    profiles: [ "main", "init" ]
+    networks:
+      - backend
+    volumes:
+      - ./event_generator:/usr/src/event_generator/
+    env_file:
+      - ./event_generator/.env
+    depends_on:
+      - db
+
   nginx:
     build: ./services/nginx
     profiles: ["main", "init"]

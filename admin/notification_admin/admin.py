@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import User, Role, UserRole, Templates, Discounts, UpdatingContent
+from .models import User, Role, UserRole, Templates, Others
 
 
 class RoleInlineAdmin(admin.TabularInline):
@@ -42,20 +42,9 @@ class TemplatesAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Discounts)
-class DiscountsAdmin(admin.ModelAdmin):
-    list_display = ('title',)
-    search_fields = ('title',)
-    fields = (
-        'title',
-        'description',
-        'template',
-    )
-
-
-@admin.register(UpdatingContent)
-class UpdatingContentAdmin(admin.ModelAdmin):
-    list_display = ('title',)
+@admin.register(Others)
+class OthersAdmin(admin.ModelAdmin):
+    list_display = ('title', 'template')
     search_fields = ('title',)
     fields = (
         'title',

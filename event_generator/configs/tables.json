@@ -1,0 +1,13 @@
+{
+  "templates": {
+    "schema": "events",
+    "name": "templates",
+    "fields": "id",
+    "filter_filed": "name"
+  },
+  "others": {
+    "schema": "events",
+    "name": "others",
+    "fields": "template_id, title, description"
+  }
+}

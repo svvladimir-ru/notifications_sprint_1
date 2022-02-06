@@ -76,25 +76,13 @@ class Templates(TimeStampMixin, models.Model):
         return self.name
 
 
-class Discounts(MainTimeStampedMixin, models.Model):
+class Others(MainTimeStampedMixin, models.Model):
     id = models.UUIDField(_('ID'), primary_key=True, auto_created=True, default=uuid.uuid4)
     template = models.ForeignKey('Templates', on_delete=models.CASCADE)
     title = models.CharField(_('Title'), max_length=50)
     description = models.TextField(_('Description'))
 
     class Meta:
-        verbose_name = _('discounts')
-        verbose_name_plural = _('discounts')
-        db_table = "events\".\"discounts"
-
-
-class UpdatingContent(MainTimeStampedMixin, models.Model):
-    id = models.UUIDField(_('ID'), primary_key=True, auto_created=True, default=uuid.uuid4)
-    template = models.ForeignKey('Templates', on_delete=models.CASCADE)
-    title = models.CharField(_('Title'), max_length=50)
-    description = models.TextField(_('Description'))
-
-    class Meta:
-        verbose_name = _('updating_content')
-        verbose_name_plural = _('updating_content')
-        db_table = "events\".\"updating_content"
+        verbose_name = _('others')
+        verbose_name_plural = _('others')
+        db_table = "events\".\"others"

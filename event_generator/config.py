@@ -4,11 +4,13 @@ from pathlib import Path
 
 from pydantic import BaseSettings
 
-from models.models import QueriesModel, Tables
+from models.models import Queries, Tables, EventsFileModel
+
 
 # Инициализация пути к файлам
 queries_file_path = Path('configs/queries.json')
 tables_file_path = Path('configs/tables.json')
+events_file_path = Path('configs/events.json')
 
 
 # Настройка и инициализация логирования
@@ -34,18 +36,9 @@ class PostgresConfigs(BaseSettings):
         env_prefix = "DB_"
 
 
-class PublisherConfigs(BaseSettings):
-    host: str = os.environ.get('PUBLISHER_HOST', 'localhost')
-    port: int = os.environ.get('PUBLISHER_PORT', 8000)
-    interface: str = os.environ.get('PUBLISHER_INTERFACE', '/api/v1/events')
-
-    class Config:
-        env_prefix = "PUBLISHER_"
-
-
-class ETLConfigs(BaseSettings):
+class MainConfigs(BaseSettings):
     postgres = PostgresConfigs()
-    queries = QueriesModel.parse_file(queries_file_path)
+    queries = Queries.parse_file(queries_file_path)
     tables = Tables.parse_file(tables_file_path)
-    publisher = PublisherConfigs()
+    events = EventsFileModel.parse_file(events_file_path)
     logger = set_logger()
