@@ -5,7 +5,6 @@
   },
   "update": {
     "base": "UPDATE {schema}.{name} SET",
-    "set": "{field} = {field_value}",
-    "where": "WHERE id = {id}"
+    "filter": "{filter_filed} = {field_value} WHERE id = '{id}'"
   }
 }

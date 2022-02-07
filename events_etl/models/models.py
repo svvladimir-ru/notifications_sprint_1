@@ -15,6 +15,7 @@ class QueryModel(BaseModel):
 
 class QueriesModel(BaseModel):
     read: QueryModel
+    update: QueryModel
 
 
 class TableModel(BaseModel):
