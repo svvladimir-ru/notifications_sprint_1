@@ -82,7 +82,6 @@ class RequestManager:
         payload = data if type(data) is dict else data.post_payload()
         try:
             status = requests.post(url=self.url, json=payload)
-            print(status.content)
             return status.content
         except Exception as e:
             self.logger.info(f"RequestManager Error: {e}")
