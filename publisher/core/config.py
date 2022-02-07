@@ -20,7 +20,7 @@ class PostgresSettings(BaseSettings):
     HOST: str = 'db'
     PORT: int = 5432
     DB: str = 'movies'
-    POSTGRES_DSN: AnyUrl = f'postgresql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DB}'
+    DSN: str = f'postgresql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DB}'
 
     class Config:
         env_prefix = "NOTIFIC_POSTGRES_"

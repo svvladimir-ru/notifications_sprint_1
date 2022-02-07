@@ -4,27 +4,22 @@ from sqlalchemy import Column, DateTime
 from sqlalchemy import String, Text, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 
-
 from database.db import Base
 
 
-class DateMixin:
-
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-
-class Template(DateMixin, Base):
+class Template(Base):
     """Модель шаблонов."""
 
     __tablename__ = "templates"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
-    name = Column(String, nullable=False)
-    template = Column(Text)
+    name = Column(Text, nullable=False)
+    template = Column(Text, nullable=False)
+
+    __table_args__ = {"schema": "events"}
 
 
-class Welcome(DateMixin, Base):
+class Welcome(Base):
     """Модель шаблонов."""
 
     __tablename__ = "welcome"
@@ -33,8 +28,10 @@ class Welcome(DateMixin, Base):
     user_id = Column("user_id", UUID(as_uuid=True), ForeignKey("user.id"))
     template_id = Column("template_id", UUID(as_uuid=True), ForeignKey("templates.id"))
 
+    __table_args__ = {"schema": "events"}
 
-class Others(DateMixin, Base):
+
+class Others(Base):
     """Модель шаблонов."""
 
     __tablename__ = "others"
@@ -44,10 +41,13 @@ class Others(DateMixin, Base):
     title = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
 
+    __table_args__ = {"schema": "events"}
 
-class User(DateMixin, Base):
+
+class User(Base):
     __tablename__ = "user"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
+    login = Column(Text, nullable=False)
     email = Column(Text, nullable=False)
     confirmed = Column(Boolean, nullable=False)
     mail_subscribe = Column(Boolean, nullable=False)

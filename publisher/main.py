@@ -5,17 +5,18 @@ import pika
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
+# from sqlalchemy.orm import Session, sessionmaker, scoped_session
 
 from api.v1 import broker
 from core import settings
-from database import database
 
-from database import rabbit, db
-from database.db import SessionLocal, engine
-
-
-database.Base.metadata.create_all(bind=engine)
-
+from database import rabbit
+# from database import postgres
+# from database.db import SessionLocal
+# from database.db import Base, engine
+#
+#
+# Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title=settings.PROJECT_NAME,
               description='Сервиса Брокер RabbitMQ',
@@ -33,13 +34,13 @@ async def startup():
     rabbit.rq = pika.BlockingConnection(pika.ConnectionParameters(settings.RABBIT.HOST))
     rabbit.rq.channel().queue_declare('welcome')
     rabbit.rq.channel().queue_declare('other')
+    # postgres.db = Session
 
 
 @app.on_event('shutdown')
 async def shutdown():
-    await rabbit.rq.close()
-    db.get_db().close()
-
+    rabbit.rq.close()
+    # postgres.db.close()
 
 app.include_router(broker.router, prefix='/api/v1/broker', tags=['broker'])
 

@@ -1,70 +1,71 @@
 import pika
 import backoff
 import requests
+import json
 from fastapi import Depends
-from sqlalchemy.orm.session import Session
+from sqlalchemy.orm import Session
 
 from core import settings
 from database.rabbit import get_rabbit
+from database.postgres import get_db
 from database.database import Others, Welcome, Template, User
-from database.db import get_db
 
 
 class RQBase:
     def __init__(self,
-                 connection: pika.BlockingConnection(
-                     pika.ConnectionParameters(settings.RABBIT.HOST)) = Depends(get_rabbit),
+                 connection: pika.BlockingConnection(pika.ConnectionParameters(settings.RABBIT.HOST)),
                  routing: str = settings.RABBIT.ROUTING):
         self.routing = routing.lower()
         self.connection = connection
 
     def open_channel(self):
-        return self.connection().channel()
+        return self.connection.channel()
 
     def close_connection(self):
-        self.connection().close()
+        self.connection.close()
 
 
 class RQWorker(RQBase):
-    def __init__(self, pk: str, **kwargs):
+    def __init__(self, pk: str, db: Session, **kwargs):
         super().__init__(**kwargs)
+        self.db = db
         self.id = pk
 
-    # @backoff.on_exception(backoff.expo, Exception, max_tries=10)
+    @backoff.on_exception(backoff.expo, Exception, max_tries=10)
     def on_massage(self):
         data = getattr(self, self.routing.lower())()
-        print(data)
+
         self.open_channel().basic_publish(exchange=settings.RABBIT.EXCHANGE,
                                           routing_key=self.routing,
-                                          body=data)
-        print(data)
+                                          body=json.dumps(data))
+
         return True
 
-    # @backoff.on_exception(backoff.expo, Exception, max_tries=10)
-    def welcome(self, db: Session = Depends(get_db)):
-        welcome = db.query(Welcome).get(id)
-        template = db.query(Template).get(welcome.template_id)
-        user = db.query(User).get(welcome.user_id)
+    @backoff.on_exception(backoff.expo, Exception, max_tries=10)
+    def welcome(self):
+        welcome = self.db.query(Welcome).get(self.id)
+        template = self.db.query(Template).get(welcome.template_id)
+        user = self.db.query(User).get(welcome.user_id)
         return {
             'email': user.email,
             'content': {
-                'username': user.username,
+                'username': user.login,
                 'template': template.template,
                 'link': self.bitly(f'http://localhost/{self.routing.lower()}/')
             },
             'subject': template.name,
         }
 
-    # @backoff.on_exception(backoff.expo, Exception, max_tries=10)
-    def other(self, db: Session = Depends(get_db)):
-        users = db.query(User).all()
-        massage = db.query(Others).get(id)
+    @backoff.on_exception(backoff.expo, Exception, max_tries=10)
+    def other(self):
+        users = self.db.query(User).all()
+        massage = self.db.query(Others).get(self.id)
         list_user = list(i.email for i in users.email)
 
         return {
             'email': list_user,
             'content': {
-                'template': db.query(Template).get(massage.template_id).template,
+                'template': self.db.query(Template).get(massage.template_id).template,
                 'description': massage.description,
                 'unsubscribe': self.bitly(f'http://localhost/{self.routing.lower()}/')
             },

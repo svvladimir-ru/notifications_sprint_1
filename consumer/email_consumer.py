@@ -22,6 +22,7 @@ class RQBase:
 class Consumer(RQBase):
     def callback(self, ch, method, properties, body):
         data = json.loads(body)
+
         try:
             send_mail(to=data.get('email'),
                       subject=data.get('subject'),

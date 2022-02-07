@@ -16,7 +16,7 @@ def send_mail(to, subject, content):
             message["Subject"] = subject
 
             env = Environment(loader=FileSystemLoader(f'{os.path.dirname(__file__)}'))
-            template = env.get_template('mail.html')
+            template = env.get_template('welcome.html')
 
             output = template.render(**{
                 'username': content.get('username'),
@@ -33,4 +33,4 @@ def send_mail(to, subject, content):
     except Exception:
         return False, "exception"
     else:
-        return True, "ok"
+        return True
