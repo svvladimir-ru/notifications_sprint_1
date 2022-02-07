@@ -1,6 +1,7 @@
 import json
 from logging import Logger
 from typing import Any, Union
+from uuid import UUID
 
 import requests
 from psycopg2 import DatabaseError, connect as db_connect
@@ -35,9 +36,9 @@ class DBManager:
         except AttributeError:
             return False
 
-    def set_query(self, method: str, table: TableModel, field_value: Any) -> str:
+    def set_query(self, method: str, table: TableModel, field_value: Any, **kwargs) -> str:
         query = getattr(self.queries, method)
-        return query.return_format(field_value=field_value, **table.dict(by_alias=True))
+        return query.return_format(field_value=field_value, **table.dict(by_alias=True), **kwargs)
 
     def read(self, table: TableModel, field_value: Any, one: bool = False):
         if self.check_connection():
@@ -56,6 +57,18 @@ class DBManager:
             finally:
                 cursor.close()
 
+    def update(self, table: TableModel, field_value: Any, uuid: UUID):
+        if self.check_connection():
+            query = self.set_query(method='update', table=table, field_value=field_value, id=uuid)
+            cursor = self.connection.cursor()
+            try:
+                cursor.execute(query)
+                self.connection.commit()
+            except DatabaseError as e:
+                self.logger.info(f"Error: {e}")
+            finally:
+                cursor.close()
+
 
 class RequestManager:
 
@@ -68,8 +81,8 @@ class RequestManager:
         payload = {
             'action': 'ping'
         }
-        status = self.send(data=payload)
         try:
+            status = self.send(data=payload)
             data = json.loads(status)
             if 'action' in data:
                 pong = data['action']
@@ -85,3 +98,4 @@ class RequestManager:
             return status.content
         except Exception as e:
             self.logger.info(f"RequestManager Error: {e}")
+            raise Exception
