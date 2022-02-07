@@ -83,6 +83,10 @@ class RequestManager:
         }
         try:
             status = self.send(data=payload)
+
+            if not status:
+                return False
+
             data = json.loads(status)
             if 'action' in data:
                 pong = data['action']
@@ -98,4 +102,4 @@ class RequestManager:
             return status.content
         except Exception as e:
             self.logger.info(f"RequestManager Error: {e}")
-            raise Exception
+            return False

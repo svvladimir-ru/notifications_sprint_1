@@ -34,7 +34,6 @@ class RQWorker(RQBase):
     @backoff.on_exception(backoff.expo, Exception, max_tries=10)
     def on_massage(self):
         data = getattr(self, self.routing.lower())()
-
         self.open_channel().basic_publish(exchange=settings.RABBIT.EXCHANGE,
                                           routing_key=self.routing,
                                           body=json.dumps(data))
