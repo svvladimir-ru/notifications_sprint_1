@@ -30,15 +30,17 @@ class RQWorker(RQBase):
         super().__init__(**kwargs)
         self.id = pk
 
-    @backoff.on_exception(backoff.expo, Exception, max_tries=10)
+    # @backoff.on_exception(backoff.expo, Exception, max_tries=10)
     def on_massage(self):
         data = getattr(self, self.routing.lower())()
+        print(data)
         self.open_channel().basic_publish(exchange=settings.RABBIT.EXCHANGE,
                                           routing_key=self.routing,
                                           body=data)
+        print(data)
         return True
 
-    @backoff.on_exception(backoff.expo, Exception, max_tries=10)
+    # @backoff.on_exception(backoff.expo, Exception, max_tries=10)
     def welcome(self, db: Session = Depends(get_db)):
         welcome = db.query(Welcome).get(id)
         template = db.query(Template).get(welcome.template_id)
@@ -53,7 +55,7 @@ class RQWorker(RQBase):
             'subject': template.name,
         }
 
-    @backoff.on_exception(backoff.expo, Exception, max_tries=10)
+    # @backoff.on_exception(backoff.expo, Exception, max_tries=10)
     def other(self, db: Session = Depends(get_db)):
         users = db.query(User).all()
         massage = db.query(Others).get(id)

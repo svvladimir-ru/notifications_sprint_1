@@ -16,8 +16,8 @@ class RabbitMQSettings(BaseSettings):
 
 class PostgresSettings(BaseSettings):
     USERNAME: str = 'postgres'
-    PASSWORD: str = 'postgres'
-    HOST: str = 'postgres_notification'
+    PASSWORD: str = 'password'
+    HOST: str = 'db'
     PORT: int = 5432
     DB: str = 'movies'
     POSTGRES_DSN: AnyUrl = f'postgresql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DB}'
