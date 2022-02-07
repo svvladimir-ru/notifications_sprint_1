@@ -15,7 +15,7 @@ class RQBase:
                  connection: pika.BlockingConnection(
                      pika.ConnectionParameters(settings.RABBIT.HOST)) = Depends(get_rabbit),
                  routing: str = settings.RABBIT.ROUTING):
-        self.routing = routing
+        self.routing = routing.lower()
         self.connection = connection
 
     def open_channel(self):
@@ -26,13 +26,13 @@ class RQBase:
 
 
 class RQWorker(RQBase):
-    def __init__(self, pk: str):
-        super().__init__()
+    def __init__(self, pk: str, **kwargs):
+        super().__init__(**kwargs)
         self.id = pk
 
     @backoff.on_exception(backoff.expo, Exception, max_tries=10)
     def on_massage(self):
-        data = getattr(self, self.routing.lower())
+        data = getattr(self, self.routing.lower())()
         self.open_channel().basic_publish(exchange=settings.RABBIT.EXCHANGE,
                                           routing_key=self.routing,
                                           body=data)

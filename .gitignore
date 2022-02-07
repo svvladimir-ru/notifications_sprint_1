@@ -108,3 +108,5 @@ db.sqlite3
 
 # Project
 /services/movies_etl/state.json
+
+tmp/logs/*

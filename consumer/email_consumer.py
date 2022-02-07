@@ -9,7 +9,7 @@ from config import settings
 class RQBase:
     def __init__(self, routing: str = settings.RABBIT.ROUTING):
         self.host = settings.RABBIT.HOST
-        self.routing = routing
+        self.routing = routing.lower()
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(settings.RABBIT.HOST))
 
     def open_channel(self):
@@ -20,9 +20,8 @@ class RQBase:
 
 
 class Consumer(RQBase):
-
     def callback(self, ch, method, properties, body):
-        data = json.load(body)
+        data = json.loads(body)
         try:
             send_mail(to=data.get('email'),
                       subject=data.get('subject'),

@@ -119,6 +119,27 @@ services:
     depends_on:
       - rabbit
 
+  consumer2:
+    build: ./consumer
+    profiles: [ "main", "init" ]
+    networks:
+      - backend
+    volumes:
+      - ./consumer:/usr/src/consumer/
+    environment:
+      - RABBIT_USERNAME=rabbit
+      - RABBIT_PASSWORD=rabbit
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_PORT=5672
+      - RABBIT_EXCHANGE=
+      - RABBIT_ROUTING=other
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=465
+      - SMTP_USER=test@gmail.com
+      - SMTP_PASSWORD=12345678
+    depends_on:
+      - rabbit
+
   nginx:
     build: ./services/nginx
     profiles: ["main", "init"]

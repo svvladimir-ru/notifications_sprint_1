@@ -25,8 +25,8 @@ SentryAsgiMiddleware(app)
 @app.on_event('startup')
 async def startup():
     rabbit.rq = pika.BlockingConnection(pika.ConnectionParameters(settings.RABBIT.HOST))
-    rabbit.rq.channel().queue_declare('Welcome')
-    rabbit.rq.channel().queue_declare('Other')
+    rabbit.rq.channel().queue_declare('welcome')
+    rabbit.rq.channel().queue_declare('other')
     db.get_db()
 
 
