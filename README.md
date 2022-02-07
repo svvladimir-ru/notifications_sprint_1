@@ -35,7 +35,11 @@
 4. `actions_api/`
 5. `admin/`
 6. `event_generator/`
-7. `events_etl`
+7. `events_etl/`
+8. `consumer/`
+9. `publisher/`
+
+Так же необходимо добавить в переменных окружения `consumer` авторизационные данные для gmail.
 
 Собрать все контейнеры
 ```

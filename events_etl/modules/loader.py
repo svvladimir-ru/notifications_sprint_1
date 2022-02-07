@@ -18,8 +18,5 @@ class Loader:
 
     def run(self):
         for event in self.transformer.run():
-            self.request_manager.send(
-                data=event,
-                exclude={'id', 'created_at', 'processed'}
-            )
+            self.request_manager.send(data=event)
 

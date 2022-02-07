@@ -41,6 +41,12 @@ class Events(TableDataModel):
     record_id: UUID
     processed: bool
 
+    def post_payload(self):
+        return {
+            "table_name": self.table_name,
+            "record_id": str(self.record_id)
+        }
+
 
 class Welcome(TableDataModel):
     user_id: UUID

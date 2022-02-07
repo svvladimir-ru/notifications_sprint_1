@@ -37,7 +37,7 @@ class PostgresConfigs(BaseSettings):
 class PublisherConfigs(BaseSettings):
     host: str = os.environ.get('PUBLISHER_HOST', 'localhost')
     port: int = os.environ.get('PUBLISHER_PORT', 8000)
-    interface: str = os.environ.get('PUBLISHER_INTERFACE', '/api/v1/events')
+    interface: str = os.environ.get('PUBLISHER_INTERFACE', '/api/v1/broker/events')
 
     class Config:
         env_prefix = "PUBLISHER_"

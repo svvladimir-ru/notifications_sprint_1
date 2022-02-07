@@ -4,10 +4,20 @@ networks:
   backend:
 
 services:
+  rabbit:
+    image: rabbitmq:3.9.13-management
+    container_name: rabbitmq
+    profiles: ["main", "init"]
+    networks:
+      - backend
+    ports:
+      - 5672:5672
+      - 15672:15672
+
   db:
     build: ./services/postgres
     container_name: postgres
-    profiles: ["main", "init"]
+    profiles: [ "main", "init" ]
     networks:
       - backend
     ports:
@@ -68,6 +78,46 @@ services:
       - ./event_generator/.env
     depends_on:
       - db
+
+  publisher:
+    build: ./publisher
+    profiles: [ "main", "init" ]
+    networks:
+      - backend
+    ports:
+      - 8000:8000
+    volumes:
+      - ./publisher:/usr/src/publisher/
+    env_file:
+      - ./publisher/.env
+    depends_on:
+      - db
+      - rabbit
+
+  events_etl:
+    build: ./events_etl
+    profiles: [ "main", "init" ]
+    networks:
+      - backend
+    volumes:
+      - ./events_etl:/usr/src/events_etl/
+    env_file:
+      - ./events_etl/.env
+    depends_on:
+      - db
+      - publisher
+
+  consumer:
+    build: ./consumer
+    profiles: [ "main", "init" ]
+    networks:
+      - backend
+    volumes:
+      - ./consumer:/usr/src/consumer/
+    env_file:
+      - ./consumer/.env
+    depends_on:
+      - rabbit
 
   nginx:
     build: ./services/nginx

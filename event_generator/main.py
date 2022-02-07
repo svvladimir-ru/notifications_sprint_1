@@ -25,7 +25,7 @@ class EventGenerator:
             raise DatabaseError
 
         self.loader.load()
-        time.sleep(30)
+        time.sleep(60)
 
     def run(self):
         while True:

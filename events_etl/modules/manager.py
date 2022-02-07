@@ -1,5 +1,6 @@
+import json
 from logging import Logger
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 import requests
 from psycopg2 import DatabaseError, connect as db_connect
@@ -68,12 +69,20 @@ class RequestManager:
             'action': 'ping'
         }
         status = self.send(data=payload)
-        return True
-
-    def send(self, data: Union[TableDataModel, dict], exclude: Optional[set] = {}):
-        payload = data if type(data) is dict else data.dict(exclude=exclude)
         try:
-            status = requests.post(url=self.url, data=payload)
+            data = json.loads(status)
+            if 'action' in data:
+                pong = data['action']
+                if pong == 'pong':
+                    return True
+        except Exception:
+            return False
+
+    def send(self, data: Union[TableDataModel, dict]):
+        payload = data if type(data) is dict else data.post_payload()
+        try:
+            status = requests.post(url=self.url, json=payload)
+            print(status.content)
             return status.content
         except Exception as e:
             self.logger.info(f"RequestManager Error: {e}")
