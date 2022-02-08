@@ -2,7 +2,7 @@ import time
 import pika
 import json
 
-from scheduler.email_sender import send_mail
+from message import Message
 from config import settings
 
 
@@ -24,10 +24,7 @@ class Consumer(RQBase):
         data = json.loads(body)
 
         try:
-            send_mail(to=data.get('email'),
-                      subject=data.get('subject'),
-                      content=data.get('content')
-                      )
+            Message(data).email()
             time.sleep(1)
         except:
             self.open_channel().stop_consuming()
