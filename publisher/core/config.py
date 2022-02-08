@@ -28,10 +28,11 @@ class PostgresSettings(BaseSettings):
 
 class Base(BaseSettings):
     PROJECT_NAME: str = 'RabbitService'
+    BITLY_ACCESS_TOKEN: str
     SENTRY_DSN: str = 'NOTIFIC_SENTRY_DSN'
     POSTGRES: PostgresSettings = PostgresSettings()
     RABBIT: RabbitMQSettings = RabbitMQSettings()
-    BITLY_ACCESS_TOKEN: str
+    REDIRECT_URL: str = 'http://localhost/'
 
     class Config:
         env_file = '.env'

@@ -2,12 +2,9 @@ import pika
 import backoff
 import requests
 import json
-from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from core import settings
-from database.rabbit import get_rabbit
-from database.postgres import get_db
 from database.database import Others, Welcome, Template, User
 
 
@@ -50,7 +47,8 @@ class RQWorker(RQBase):
             'content': {
                 'username': user.login,
                 'template': template.template,
-                'link': self.bitly(f'http://localhost/{self.routing.lower()}/')
+                'link': self.bitly(f'{settings.REDIRECT_URL}{self.routing.lower()}/'),
+                'template_name': template.name
             },
             'subject': template.name,
         }
@@ -60,13 +58,15 @@ class RQWorker(RQBase):
         users = self.db.query(User).all()
         massage = self.db.query(Others).get(self.id)
         list_user = list(i.email for i in users.email)
+        template = self.db.query(Template).get(massage.template_id)
 
         return {
             'email': list_user,
             'content': {
-                'template': self.db.query(Template).get(massage.template_id).template,
+                'template': template.template,
                 'description': massage.description,
-                'unsubscribe': self.bitly(f'http://localhost/{self.routing.lower()}/')
+                'unsubscribe': self.bitly(f'{settings.REDIRECT_URL}{self.routing.lower()}/'),
+                'template_name': template.name
             },
             'subject': massage.title,
         }
@@ -84,4 +84,4 @@ class RQWorker(RQBase):
             response = requests.post(endpoint, headers=header, data=query_params, verify=False)
             return response.json()
         except:
-            return 'http://localhost:8000'
+            return settings.REDIRECT_URL
