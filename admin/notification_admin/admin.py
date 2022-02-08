@@ -1,6 +1,7 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
-from .models import User, Role, UserRole, Templates, Others
+from .models import User, Roles, UserRole, Templates, Others
 
 
 class RoleInlineAdmin(admin.TabularInline):
@@ -10,7 +11,7 @@ class RoleInlineAdmin(admin.TabularInline):
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('login', 'email', 'confirmed', 'mail_subscribe')
+    list_display = ('login', 'email', 'confirmed', 'mail_subscribe', 'get_role')
     list_filter = ('confirmed', 'mail_subscribe')
     search_fields = ('login', 'email',)
     fields = (
@@ -21,9 +22,15 @@ class UserAdmin(admin.ModelAdmin):
         'password',
     )
     inlines = (RoleInlineAdmin,)
+    list_prefetch_related = ('roles',)
+
+    def get_role(self, obj):
+        return ''.join([role.name for role in obj.roles.all()])
+
+    get_role.short_description = _('Role')
 
 
-@admin.register(Role)
+@admin.register(Roles)
 class RoleAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)

@@ -20,7 +20,7 @@ class TimeStampMixin(MainTimeStampedMixin):
 
 
 # Модели для пользователей
-class Role(TimeStampMixin, models.Model):
+class Roles(TimeStampMixin, models.Model):
     id = models.UUIDField(_('ID'), primary_key=True, auto_created=True, default=uuid.uuid4)
     name = models.CharField(_('Name'), max_length=50, unique=True)
 
@@ -36,7 +36,7 @@ class Role(TimeStampMixin, models.Model):
 class UserRole(MainTimeStampedMixin, models.Model):
     id = models.UUIDField(_('ID'), primary_key=True, auto_created=True, default=uuid.uuid4)
     user = models.ForeignKey('User', on_delete=models.CASCADE)
-    role = models.ForeignKey('Role', on_delete=models.CASCADE)
+    role = models.ForeignKey('Roles', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'users\".\"user_role'
@@ -53,7 +53,7 @@ class User(TimeStampMixin, models.Model):
     confirmed = models.BooleanField(_('Confirmed'), default=False)
     mail_subscribe = models.BooleanField(_('Subscribe'), default=True)
 
-    role = models.ManyToManyField(Role, through='UserRole')
+    roles = models.ManyToManyField(Roles, through='UserRole')
 
     class Meta:
         verbose_name = _('user')

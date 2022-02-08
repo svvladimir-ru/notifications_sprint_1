@@ -10,9 +10,6 @@ services:
     profiles: ["main", "init"]
     networks:
       - backend
-    ports:
-      - 5672:5672
-      - 15672:15672
 
   db:
     build: ./services/postgres
@@ -20,8 +17,6 @@ services:
     profiles: [ "main", "init" ]
     networks:
       - backend
-    ports:
-      - 5432:5432
     volumes:
       - postgres_volume:/var/lib/postgresql/data/
     env_file:
@@ -84,8 +79,6 @@ services:
     profiles: [ "main", "init" ]
     networks:
       - backend
-    ports:
-      - 8000:8000
     volumes:
       - ./publisher:/usr/src/publisher/
     env_file:

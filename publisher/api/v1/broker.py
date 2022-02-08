@@ -27,5 +27,6 @@ async def on_massage(info: Request,
     RQWorker(pk=data['record_id'],
              db=db,
              routing=data['table_name'],
-             connection = connection).on_massage()
+             connection=connection).on_massage()
+
     return HTTPStatus.OK
